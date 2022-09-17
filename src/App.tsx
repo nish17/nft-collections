@@ -1,23 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from "react";
 import './App.css';
-
+import { IChildState } from "./types";
+import WalletCard from './WalletCard';
 function App() {
+  const [childState, setChildState] = useState<IChildState>({isAccountSet: false});
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h3>Hello world</h3>
+        <WalletCard passChildState={setChildState}/>
+        {childState.isAccountSet ? <div>Account Present</div>: <div>Account Absent</div>}
       </header>
     </div>
   );
