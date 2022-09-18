@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { ethMethods, IChildState } from "./types";
+import { ethMethods, BtnStrings, IChildState } from "./types";
 function WalletCard({passChildState}:any) {
-
-  const CONNECT_METAMASK = "Connect Metamask to explore!";
-  const WALLET_CONNECTED = "Wallet Connected!";
-  const LOG_OUT = "Click to logout!";
   
   const [defaultAccount, setDefaultAccount] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [btnText, setBtnText] = useState<string>(CONNECT_METAMASK);
+  const [btnText, setBtnText] = useState<string>(BtnStrings.CONNECT_METAMASK);
 
   const handleMouseIn = () => {
-    if(defaultAccount) setBtnText(LOG_OUT);
+    if(defaultAccount) {
+      setBtnText(BtnStrings.LOG_OUT);
+    }
   };
 
   const handleMouseOut = () => {
-    if(defaultAccount) setBtnText(WALLET_CONNECTED);
+    if(defaultAccount) {
+      setBtnText(BtnStrings.WALLET_CONNECTED);
+    }
   };
   const accountChangedHandler = (account: string) => {
     if(!account) {
@@ -23,7 +23,7 @@ function WalletCard({passChildState}:any) {
       return;
     }
     setDefaultAccount(account);
-    setBtnText(WALLET_CONNECTED);
+    setBtnText(BtnStrings.WALLET_CONNECTED);
     passChildState((prevState:IChildState) => ({...prevState, isAccountSet: true}));
   }
 
@@ -34,7 +34,7 @@ function WalletCard({passChildState}:any) {
     }
     if(defaultAccount) { 
       setDefaultAccount(""); 
-      setBtnText(CONNECT_METAMASK);
+      setBtnText(BtnStrings.CONNECT_METAMASK);
       passChildState((prevState:IChildState) => ({...prevState, isAccountSet: false}));
       return;
     }
@@ -45,7 +45,7 @@ function WalletCard({passChildState}:any) {
   return (
     <div>
       <button onClick={connectWalletHandler} onMouseOver={handleMouseIn} onMouseOut={handleMouseOut}> {btnText} </button>
-      {defaultAccount && <h3>Address: {defaultAccount} </h3>}
+      {defaultAccount && <h3> Your Address: {defaultAccount} </h3>}
       {error && <h3> {error} </h3>}
     </div>
   );
