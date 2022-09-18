@@ -18,7 +18,6 @@ function getClient() {
 async function fetchData(query: string, variables: Record<string, string>): Promise<ITrendingCollection[] | undefined> {
   const client = getClient();
   try {
-    debugger;
     console.log('fetching');
     const collections:ITrendingCollectionDto = await client.request(query, variables);
     const transformedData = collections.trendingCollections.edges.map((collection) => collection.node);
