@@ -1,9 +1,3 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
 In the project directory, you can run:
 
 ### `npm start`
@@ -14,33 +8,54 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
+### Known problems
+- Couldn't figure in the given time that on logging in, it is making 3 same requests at once, seems like a React custom hook issue, based on the state change when the component re-renders, I think it is also refetching it again.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## QnA
+- Handle User Authentication
+    - Would you need a database?
 
-### `npm run build`
+        Yes, database will be needed for storing user's credentials and validating those as and when required.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    - Which one and what might the schema look like?
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+        SQL or NoSQL, doesn't really matter much, as long as the input fields are well sanitized and validated before sending it to the DB.
+        Another point I would like to add is that, SQL definitely has some advantages over NoSQL when there are related entities in our product.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+        SCHEMA:
 
-### `npm run eject`
+            id: uuidv4 (PK)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+            email: string
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+            password_hash: string
+        
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+        - password hash will be generated with the help of hashing function with salt.
+    
+    - Are there pros/cons to a specific choice? (SQL vs NoSQL)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+        | SQL                                    | NoSQL                                    |
+        |----------------------------------------|------------------------------------------|
+        | Good when dealing with structured data | Good when dealing with unstructured data |
+        | define schema beforehand               | schemaless                               |
+        | can scale vertically                   | can easily scale horizontally            |
+        | Follows ACID properties                | sticks to CAP theorem (2 properties)     |
 
-## Learn More
+        Specific to our case (User Authentication), 
+        - we already know the structure of the data coming in (SQL✅)
+        - ACID compliance (SQL✅)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    -  Serves data to the client via an API
+        - What kind of API would you use?
+            - I would choose GraphQL over REST here, because it fast, efficient and self documenting
+            - It is also organized in terms of schema and type system.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+
+    - Scales to handle thousands of requests per second
+        - This could involve a lot of different optimizations, but what would you try first or what are the top three you might consider?
+            - make systems distributed, use microservice architecture 
+            - make their replicas
+            - add load balancer to evenly distribute the load across replicas
+            - DB can become a bottleneck at some point (given we chose SQL, more optimizations will be required here)
+
