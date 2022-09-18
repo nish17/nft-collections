@@ -52,6 +52,7 @@ export function useTrendingCollection(query: string, variables: Record<string, s
         }
       })();
     }
+    // eslint-disable-next-line
   }, [query]);
 
  return { collections, isLoading, errors };
