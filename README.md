@@ -1,6 +1,6 @@
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -8,8 +8,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### Known problems
-- Couldn't figure in the given time that on logging in, it is making 3 same requests at once, seems like a React custom hook issue, based on the state change when the component re-renders, I think it is also refetching it again.
 
 ## QnA
 - Handle User Authentication
@@ -29,7 +27,8 @@ You will also see any lint errors in the console.
             email: string
 
             password_hash: string
-        
+
+            salt: string
 
         - password hash will be generated with the help of hashing function with salt.
     
@@ -40,11 +39,10 @@ You will also see any lint errors in the console.
         | Good when dealing with structured data | Good when dealing with unstructured data |
         | define schema beforehand               | schemaless                               |
         | can scale vertically                   | can easily scale horizontally            |
-        | Follows ACID properties                | sticks to CAP theorem (2 properties)     |
+        | Follows ACID properties                |                     -                    |
+        |                     -                  | sticks to CAP theorem (2 properties)     |
 
-        Specific to our case (User Authentication), 
-        - we already know the structure of the data coming in (SQL✅)
-        - ACID compliance (SQL✅)
+        For the User Authentication specific case, since we already know the structure of the data, SQL makes it a better choice.
 
     -  Serves data to the client via an API
         - What kind of API would you use?
@@ -54,8 +52,10 @@ You will also see any lint errors in the console.
 
     - Scales to handle thousands of requests per second
         - This could involve a lot of different optimizations, but what would you try first or what are the top three you might consider?
-            - make systems distributed, use microservice architecture 
-            - make their replicas
-            - add load balancer to evenly distribute the load across replicas
+            - Adding a caching layer using Redis will definitely impact the performace 
+            - add load balancer and automate the scaling of replicas based on the load
             - DB can become a bottleneck at some point (given we chose SQL, more optimizations will be required here)
-
+            - if the exisiting system is monolithic, we can it distributed using microservice architecture 
+    
+    - Provides real-time updates to clients as new data is available
+        - Using sockets, we can do real time communication and when we scale it multiple pods, using Redis and pub-sub architecture will help in routing the information to several pods. 

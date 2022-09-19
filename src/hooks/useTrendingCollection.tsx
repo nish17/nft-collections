@@ -13,10 +13,10 @@ function getClient() {
   return graphQLClient;
 }
 
-async function fetchData(query: string, variables: Record<string, string>): Promise<ITrendingCollection[] | undefined> {
+async function fetchData(query: string): Promise<ITrendingCollection[] | undefined> {
   const client = getClient();
   try {
-    const collections:ITrendingCollectionDto = await client.request(query, variables);
+    const collections:ITrendingCollectionDto = await client.request(query);
     const transformedData = collections.trendingCollections.edges.map((collection) => collection.node);
     return transformedData;
   } catch(err) {
@@ -24,7 +24,7 @@ async function fetchData(query: string, variables: Record<string, string>): Prom
   }
 }
 
-export function useTrendingCollection(query: string, variables: Record<string, string>, shouldFetch: boolean):ITrendingCollectionHook {
+export function useTrendingCollection(query: string):ITrendingCollectionHook {
 
   const [collections, setCollections] = useState<ITrendingCollection[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,22 +32,17 @@ export function useTrendingCollection(query: string, variables: Record<string, s
 
   useEffect(() => {
     setIsLoading(true);
-
-    if(shouldFetch) {
-      (async () => {
-        setIsLoading(true);
-        try {
-          if(!collections) {
-            const collections = await fetchData(query, variables);
-            setIsLoading(false);
-            setCollections(collections);
-          }
-        }catch(err) {
-          setIsLoading(false);
-          setErrors(err as string);
-        }
-      })();
-    }
+    (async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchData(query);
+        setIsLoading(false);
+        setCollections(data);
+      } catch(err) {
+        setIsLoading(false);
+        setErrors(err as string);
+      }
+    })();
   }, [query]);
 
  return { collections, isLoading, errors };

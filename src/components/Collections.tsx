@@ -1,10 +1,10 @@
 import { useTrendingCollection } from "../hooks/useTrendingCollection";
 import { TRENDING_COLLECTION } from "../queries";
 import styles from '../Collections.module.css';
-import { ITrendingCollection, IChildState } from "../types";
+import { ITrendingCollection } from "../types";
 
-export function CollectionsView({childState}: {childState: IChildState}) {
-  const { collections, isLoading, errors } = useTrendingCollection(TRENDING_COLLECTION, {}, childState.isAccountSet);
+export function CollectionsView() {
+  const { collections, isLoading, errors } = useTrendingCollection(TRENDING_COLLECTION);
 
   if(isLoading) return <div>Loading...</div>;
 

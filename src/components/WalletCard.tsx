@@ -1,51 +1,64 @@
 import { useState } from "react";
 import { ethMethods, BtnStrings, IChildState } from "../types";
-function WalletCard({passChildState}:any) {
+function WalletCard({ setIsLoggedIn }: any) {
   
-  const [defaultAccount, setDefaultAccount] = useState<string>("");
+  const [loggedInAccount, setLoggedInAccount] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [btnText, setBtnText] = useState<string>(BtnStrings.CONNECT_METAMASK);
 
+  const isLoggedIn = () => {
+    return !!loggedInAccount;
+  };
+
   const handleMouseIn = () => {
-    if(defaultAccount) {
+    if(isLoggedIn()) {
       setBtnText(BtnStrings.LOG_OUT);
     }
   };
 
   const handleMouseOut = () => {
-    if(defaultAccount) {
+    if(isLoggedIn()) {
       setBtnText(BtnStrings.WALLET_CONNECTED);
     }
   };
+
+  const login = async () => {
+    const accounts = await window.ethereum.request({method: ethMethods.REQUEST_ACCOUNTS});
+    accountChangedHandler(accounts[0]);
+  };
+
+  const logout = () => {
+    setLoggedInAccount(""); 
+    setIsLoggedIn(false);
+    setBtnText(BtnStrings.CONNECT_METAMASK);
+  };
+
   const accountChangedHandler = (account: string) => {
     if(!account) {
       setError("No Account found");
       return;
     }
-    setDefaultAccount(account);
+    setLoggedInAccount(account);
     setBtnText(BtnStrings.WALLET_CONNECTED);
-    passChildState((prevState:IChildState) => ({...prevState, isAccountSet: true}));
-  }
+    setIsLoggedIn(true);
+  };
 
   const connectWalletHandler = async () => {
     if(!window.ethereum) {
       setError("Metamask not found!");
       return;
     }
-    if(defaultAccount) { 
-      setDefaultAccount(""); 
-      setBtnText(BtnStrings.CONNECT_METAMASK);
-      passChildState((prevState:IChildState) => ({...prevState, isAccountSet: false}));
+    if(isLoggedIn()) { 
+      logout();
       return;
     }
-    const accounts = await window.ethereum.request({method: ethMethods.REQUEST_ACCOUNTS});
-    accountChangedHandler(accounts[0]);
-  }
+    await login();
+  };
 
   return (
     <div>
       <button onClick={connectWalletHandler} onMouseOver={handleMouseIn} onMouseOut={handleMouseOut}> {btnText} </button>
-      {defaultAccount && <h3> Your Address: {defaultAccount} </h3>}
+      {loggedInAccount && <h3> Your Address: {loggedInAccount} </h3>}
       {error && <h3> {error} </h3>}
     </div>
   );
