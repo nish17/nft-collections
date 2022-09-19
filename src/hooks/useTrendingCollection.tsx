@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { GraphQLClient } from "graphql-request";
 import { ITrendingCollection, ITrendingCollectionDto, ITrendingCollectionHook } from "../types";
 
-const {REACT_APP_API_KEY, REACT_APP_API_ENDPOINT} = process.env;
-
 function getClient() {
-  const endpoint = REACT_APP_API_ENDPOINT as string;
+  const endpoint = process.env.NEXT_PUBLIC_API_ENDPOINT as string;
 
   const graphQLClient = new GraphQLClient(endpoint, {
       headers: {
-        "x-api-key": REACT_APP_API_KEY as string,
+        "x-api-key": process.env.NEXT_PUBLIC_API_KEY as string,
       },
     });
   return graphQLClient;
@@ -18,7 +16,6 @@ function getClient() {
 async function fetchData(query: string, variables: Record<string, string>): Promise<ITrendingCollection[] | undefined> {
   const client = getClient();
   try {
-    console.log('fetching');
     const collections:ITrendingCollectionDto = await client.request(query, variables);
     const transformedData = collections.trendingCollections.edges.map((collection) => collection.node);
     return transformedData;
@@ -51,7 +48,6 @@ export function useTrendingCollection(query: string, variables: Record<string, s
         }
       })();
     }
-    // eslint-disable-next-line
   }, [query]);
 
  return { collections, isLoading, errors };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ethMethods, BtnStrings, IChildState } from "./types";
+import { ethMethods, BtnStrings, IChildState } from "../types";
 function WalletCard({passChildState}:any) {
   
   const [defaultAccount, setDefaultAccount] = useState<string>("");

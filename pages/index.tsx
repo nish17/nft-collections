@@ -1,15 +1,15 @@
 import { useState } from "react";
-import './App.css';
-import { CollectionsView } from "./components/Collections";
-import { IChildState } from "./types";
-import WalletCard from './WalletCard';
+import styles from '../src/App.module.css';
+import { CollectionsView } from "../src/components/Collections";
+import { IChildState } from "../src/types";
+import WalletCard from '../src/components/WalletCard';
 
 function App() {
   const [childState, setChildState] = useState<IChildState>({isAccountSet: false});
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className={styles.App}>
+      <header className={styles.header}>
         <WalletCard passChildState={setChildState}/>
         {childState.isAccountSet && <CollectionsView childState={childState}/>}
       </header>
